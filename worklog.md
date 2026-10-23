@@ -1,0 +1,24 @@
+# Worklog
+
+---
+Task ID: 1
+Agent: Main agent (Z.ai)
+Task: Build Taiwo Adebola's production-quality personal developer portfolio (Next.js 16, TypeScript, Tailwind CSS 4, shadcn/ui, Motion/Framer Motion) — full multi-page site per detailed user spec.
+
+Work Log:
+- Loaded fullstack-dev skill; initialized environment via init-fullstack.sh; verified scaffold (Next.js 16.1.3, React 19, Tailwind 4, Prisma 6, framer-motion 12, next-themes, zod 4).
+- Attempted GitHub profile discovery via web search for distinctive repo names (Order of Service, Jurix, Alchemist, XL Drive, LinkLens) — no verifiable match found; per spec fallback rule, built GitHub integration as env-configurable (GITHUB_USERNAME) with local catalogue fallback. No username invented.
+- Design system: rewrote globals.css with warm off-white/near-black/restrained blue accent tokens (oklch), editorial utilities (container-site, label-mono), scroll-cue + availability keyframes with prefers-reduced-motion guards; sticky-footer flex layout in root layout.
+- Data layer: src/lib/site.ts (env-driven links: GITHUB_USERNAME, LINKEDIN_URL, CONTACT_EMAIL, NEXT_PUBLIC_AVAILABLE_FOR, NEXT_PUBLIC_SITE_URL — unset links never render); project catalogue of 24 honest case studies across 5 categories (software/security/ai/devops/trading) in 3 data files; stack.ts with core/working/exploring levels (no skill bars); articles.ts with 3 full structured articles (~800 words each); github.ts server-side integration (hourly fetch cache, rate-limit-safe, fallback to local catalogue).
+- Components: providers (next-themes + MotionConfig reducedMotion="user"), site-header (sticky, animated active nav underline via layoutId, accessible mobile menu with Escape/scroll-lock/focus-return), theme-toggle (useSyncExternalStore mounted detection), reveal (whileInView once, opacity/transform only), cover-art (9 abstract typographic SVG variants — designed covers, never fake screenshots), project-card, projects-explorer (client filter tabs with staggered grid), github-section (live/fallback modes), contact-form (react-hook-form + zod + honeypot), article-row, infra-diagram (hand-drawn SVG of self-hosted stack), section-heading, badges.
+- Pages: home (hero with staggered entrance + scroll cue + conditional availability badge; selected work; about teaser; stack teaser; GitHub section; writing; CTA), /about, /projects + /projects/[slug] (8-section case-study template, generateStaticParams, prev/next), /stack, /engineering (10 capabilities tied to real projects + infra diagram), /contact, /blog + /blog/[slug], custom 404, sitemap.ts (34 URLs), robots.ts, opengraph-image.tsx (next/og), icon.svg monogram.
+- Contact pipeline: Prisma schema (ContactMessage with hashed IP), db:push; POST /api/contact with zod validation, honeypot silent-drop, 5/hr in-memory rate limit per IP, real success only after DB write; GET inbox via timing-safe ADMIN_TOKEN.
+- CV: scripts/generate_cv.py (reportlab, one page, honest content) → public/cv/taiwo-adebola-cv.pdf.
+- Quality: strict TS (noImplicitAny true, ignoreBuildErrors false) + ESLint clean; fixed JSX fragment error in cover-art, timingSafeEqual import, removed invalid eslint key from next.config; React 19 hooks rule fixes (useSyncExternalStore for mounted; removed setState-in-effect); removed conflicting public/robots.txt; added no-JS [data-reveal] visibility fallback via noscript.
+- Agent Browser end-to-end verification: all pages render error-free; theme toggle (class switches to dark); mobile menu opens/Escape-closes/scroll-lock releases; category filter (Security → exactly 3 projects); case study renders all 8 sections; contact form: empty-submit shows 3 validation errors, real submission → "Message received" + row verified in SQLite with hashed IP; 404 custom page; sticky footer flush; sitemap.xml/robots.txt/OG image/CV PDF all 200.
+- VLM design reviews: scrolled home content PASS (cards, grid, alignment), dark theme PASS, mobile 390px PASS, OG image PASS. (Full-page screenshot initially showed below-fold reveals at opacity-0 — screenshot artifact, not a bug; scroll behavior verified working.)
+
+Stage Summary:
+- Deliverable: complete, honest, production-quality portfolio at / (dev server port 3000). 24 case studies, 3 articles, real contact pipeline, CV PDF, full SEO.
+- Key decisions: GitHub profile left env-configurable (never invented); statuses labelled concept/in-development/experimental/active/ongoing; Jurix & RunX deliberately minimal pending repo review; designed SVG cover art instead of fake screenshots; framer-motion 12 used as Motion for React engine (same library, avoids duplicate dependency).
+- To activate live data: set GITHUB_USERNAME (+ LINKEDIN_URL, CONTACT_EMAIL, NEXT_PUBLIC_AVAILABLE_FOR, NEXT_PUBLIC_SITE_URL, ADMIN_TOKEN) in .env — all documented there; repo-name guesses adjustable in src/lib/data/*.ts.

@@ -1,0 +1,224 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-accent-blue: var(--accent-blue);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+  /* Warm off-white paper */
+  --background: oklch(0.985 0.002 80);
+  --foreground: oklch(0.155 0.004 80);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.155 0.004 80);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.155 0.004 80);
+  /* Near-black buttons */
+  --primary: oklch(0.175 0.004 80);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0.003 80);
+  --secondary-foreground: oklch(0.225 0.004 80);
+  --muted: oklch(0.955 0.003 80);
+  --muted-foreground: oklch(0.5 0.012 80);
+  --accent: oklch(0.945 0.004 80);
+  --accent-foreground: oklch(0.225 0.004 80);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.905 0.004 80);
+  --input: oklch(0.905 0.004 80);
+  --ring: oklch(0.55 0.16 255);
+  --chart-1: oklch(0.55 0.19 257);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0.002 80);
+  --sidebar-foreground: oklch(0.155 0.004 80);
+  --sidebar-primary: oklch(0.175 0.004 80);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.945 0.004 80);
+  --sidebar-accent-foreground: oklch(0.225 0.004 80);
+  --sidebar-border: oklch(0.905 0.004 80);
+  --sidebar-ring: oklch(0.55 0.16 255);
+  /* Restrained blue accent — used sparingly for links, focus and highlights */
+  --accent-blue: oklch(0.502 0.191 257.4);
+  color-scheme: light;
+}
+
+.dark {
+  --background: oklch(0.14 0.002 80);
+  --foreground: oklch(0.955 0.002 80);
+  --card: oklch(0.178 0.002 80);
+  --card-foreground: oklch(0.955 0.002 80);
+  --popover: oklch(0.178 0.002 80);
+  --popover-foreground: oklch(0.955 0.002 80);
+  --primary: oklch(0.955 0.002 80);
+  --primary-foreground: oklch(0.16 0.002 80);
+  --secondary: oklch(0.218 0.002 80);
+  --secondary-foreground: oklch(0.955 0.002 80);
+  --muted: oklch(0.218 0.002 80);
+  --muted-foreground: oklch(0.66 0.005 80);
+  --accent: oklch(0.228 0.002 80);
+  --accent-foreground: oklch(0.955 0.002 80);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0.262 0.002 80);
+  --input: oklch(0.262 0.002 80);
+  --ring: oklch(0.68 0.14 255);
+  --chart-1: oklch(0.709 0.153 252.5);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.178 0.002 80);
+  --sidebar-foreground: oklch(0.955 0.002 80);
+  --sidebar-primary: oklch(0.709 0.153 252.5);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.228 0.002 80);
+  --sidebar-accent-foreground: oklch(0.955 0.002 80);
+  --sidebar-border: oklch(0.262 0.002 80);
+  --sidebar-ring: oklch(0.68 0.14 255);
+  --accent-blue: oklch(0.709 0.153 252.5);
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent-blue) 22%, transparent);
+  }
+  /* Thin, unobtrusive scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Smooth anchor scrolling, disabled for reduced-motion users */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Site-wide layout container (editorial measure) */
+@utility container-site {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-site {
+    padding-inline: 2rem;
+  }
+}
+
+/* Small uppercase mono label used across the site */
+@utility label-mono {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Subtle scroll cue animation (paused for reduced motion) */
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.4;
+  }
+}
+
+.animate-scroll-cue {
+  animation: scroll-cue 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-cue {
+    animation: none;
+  }
+}
+
+/* Soft availability pulse (respecting reduced motion) */
+@keyframes availability-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, oklch(0.72 0.17 155) 45%, transparent);
+  }
+  60% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+}
+
+.animate-availability {
+  animation: availability-pulse 2.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-availability {
+    animation: none;
+  }
+}
