@@ -83,6 +83,7 @@ export interface Project {
   cover: CoverVariant;
   /** Featured projects appear on the home page. */
   featured?: boolean;
+  published?: boolean;
   caseStudy: ProjectCaseStudy;
 }
 

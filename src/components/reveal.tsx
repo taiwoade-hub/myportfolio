@@ -1,9 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import {
+  CursorPrintReveal,
+  type CursorPrintRevealProps,
+} from "@/components/motion/cursor-print-reveal";
 
-interface RevealProps {
+interface RevealProps extends CursorPrintRevealProps {
   children: ReactNode;
   className?: string;
   /** Stagger offset in seconds. */
@@ -13,28 +16,30 @@ interface RevealProps {
 }
 
 /**
- * Viewport-triggered reveal. Animates opacity and transform only,
- * fires once, and collapses to a plain fade (or nothing) for
+ * Viewport-triggered reveal powered by the autonomous Cursor Builder
+ * printing system. Dispatches engineering cursors to trace a live wireframe
+ * before revealing the underlying DOM element, collapsing cleanly for
  * reduced-motion users.
  */
-export function Reveal({ children, className, delay = 0, y = 16 }: RevealProps) {
-  const prefersReduced = useReducedMotion();
-  const offset = prefersReduced ? 0 : y;
-
+export function Reveal({
+  children,
+  className,
+  delay = 0,
+  y = 16,
+  label = "DOM_NODE",
+  preloaderTarget,
+  disabled,
+}: RevealProps) {
   return (
-    <motion.div
-      data-reveal
+    <CursorPrintReveal
       className={className}
-      initial={{ opacity: 0, y: offset }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-72px" }}
-      transition={{
-        duration: 0.55,
-        delay,
-        ease: [0.21, 0.47, 0.32, 0.98],
-      }}
+      delay={delay}
+      y={y}
+      label={label}
+      preloaderTarget={preloaderTarget}
+      disabled={disabled}
     >
       {children}
-    </motion.div>
+    </CursorPrintReveal>
   );
 }

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { ProjectsExplorer } from "@/components/projects-explorer";
 import { StatusBadge } from "@/components/badges";
-import { projects, statusMeta } from "@/lib/projects";
+import { statusMeta } from "@/lib/projects";
+import { getLiveProjects } from "@/lib/dynamic-data";
 import type { ProjectStatus } from "@/lib/project-types";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -23,7 +26,8 @@ const statusOrder: ProjectStatus[] = [
   "ongoing",
 ];
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await getLiveProjects();
   return (
     <div className="container-site py-16 md:py-24">
       <header className="mb-12 max-w-2xl">

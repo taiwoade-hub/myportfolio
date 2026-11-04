@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowUpRight, Download, Github, Linkedin, Mail } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ArrowUpRight, Download, Github, Linkedin, Mail, Sparkles } from "lucide-react";
 import { navItems, site } from "@/lib/site";
 import type { SocialLinks } from "@/lib/site";
+import { BrandLogo } from "@/components/brand-logo";
 
 /**
  * Editorial footer: a closing invitation, compact link columns, and a
@@ -9,6 +13,9 @@ import type { SocialLinks } from "@/lib/site";
  * keep it pinned to the bottom of the viewport.
  */
 export function SiteFooter({ social }: { social: SocialLinks }) {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
+
   const year = new Date().getFullYear();
 
   const elsewhere = [
@@ -114,17 +121,23 @@ export function SiteFooter({ social }: { social: SocialLinks }) {
             <p className="label-mono mb-4 text-muted-foreground">Documents</p>
             <ul className="space-y-2.5">
               <li>
+                <Link
+                  href="/cv"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-accent-blue" aria-hidden="true" />
+                  Interactive Shader CV
+                </Link>
+              </li>
+              <li>
                 <a
                   href={site.cvPath}
                   download
                   className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                  Download CV
+                  Download CV (PDF)
                 </a>
-              </li>
-              <li className="text-sm text-muted-foreground/70">
-                PDF · one page
               </li>
             </ul>
           </div>
@@ -132,9 +145,12 @@ export function SiteFooter({ social }: { social: SocialLinks }) {
 
         {/* Colophon */}
         <div className="flex flex-col gap-3 border-t border-border py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-xs text-muted-foreground/70 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {year} {site.name}. All rights reserved.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <BrandLogo size="sm" />
+            <p>
+              © {year} {site.name}. All rights reserved.
+            </p>
+          </div>
           <p className="font-mono text-[11px] tracking-wide">
             Designed &amp; built with Next.js · TypeScript · Tailwind CSS
           </p>

@@ -1,21 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getSiteUrl, getSocialLinks, site } from "@/lib/site";
+import { getLiveUiConfig } from "@/lib/dynamic-data";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "./fonts/geist.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/geist-mono.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
   display: "swap",
 });
 
@@ -69,20 +70,21 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const uiConfig = await getLiveUiConfig();
   const social = getSocialLinks();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-theme={uiConfig.activeTheme}>
       <head>
         {/* No-JS fallback: motion components render hidden initial states
             server-side; without JavaScript, force them visible. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+          <style>{`[data-reveal],[data-print-target]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
         </noscript>
       </head>
       <body

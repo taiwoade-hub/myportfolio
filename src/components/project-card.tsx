@@ -5,6 +5,8 @@ import { StatusBadge, TechChips } from "@/components/badges";
 import { getCategoryMeta } from "@/lib/projects";
 import type { Project } from "@/lib/project-types";
 import { cn } from "@/lib/utils";
+import { ArchitecturalSpotlightLayer } from "@/components/motion/architectural-spotlight";
+import { KineticTilt } from "@/components/motion/kinetic-tilt";
 
 interface ProjectCardProps {
   project: Project;
@@ -13,8 +15,8 @@ interface ProjectCardProps {
 
 /**
  * Reusable project card. The whole card is one link to the case study —
- * no nested interactive elements, keyboard focusable, hover feedback
- * handled by CSS transforms only.
+ * no nested interactive elements, keyboard focusable, enhanced with
+ * monochromatic architectural spotlight masking and restrained 3D cover tilt.
  */
 export function ProjectCard({ project, className }: ProjectCardProps) {
   const category = getCategoryMeta(project.category);
@@ -22,16 +24,22 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
   return (
     <Link
       href={`/projects/${project.slug}`}
+      data-spotlight-card
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25 hover:shadow-lg hover:shadow-foreground/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
     >
+      <ArchitecturalSpotlightLayer />
+
       <div className="relative aspect-[16/10] overflow-hidden border-b border-border bg-muted/40">
-        <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none">
+        <KineticTilt
+          maxDegrees={2.8}
+          className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+        >
           <CoverArt variant={project.cover} name={project.name} />
-        </div>
-        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+        </KineticTilt>
+        <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-4">
           {category ? (
             <span className="label-mono text-foreground/45 [text-shadow:none]">
               {category.shortLabel}

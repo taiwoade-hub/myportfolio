@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CursorPrintReveal } from "@/components/motion/cursor-print-reveal";
 
 interface SectionHeadingProps {
   /** Zero-padded index, e.g. "01" — the editorial marker. */
@@ -24,16 +25,30 @@ export function SectionHeading({
   action,
   className,
 }: SectionHeadingProps) {
+  const printTag = index
+    ? `SEC_${index}_${label.toUpperCase().replace(/[^A-Z0-9]+/g, "_")}`
+    : `SEC_${label.toUpperCase().replace(/[^A-Z0-9]+/g, "_")}`;
+
   return (
-    <div className={cn("mb-10 md:mb-14", className)}>
+    <CursorPrintReveal
+      label={printTag.slice(0, 18)}
+      y={10}
+      className={cn("mb-10 md:mb-14", className)}
+    >
       <div className="flex items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <p className="label-mono flex items-center gap-3 text-muted-foreground">
+          <p
+            data-scramble
+            className="label-mono flex items-center gap-3 text-muted-foreground"
+          >
             {index && <span className="text-accent-blue">{index}</span>}
             <span aria-hidden="true" className="h-px w-8 bg-border" />
             <span>{label}</span>
           </p>
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+          <h2
+            data-scramble
+            className="mt-4 text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
+          >
             {title}
           </h2>
           {description ? (
@@ -55,6 +70,6 @@ export function SectionHeading({
           </Link>
         ) : null}
       </div>
-    </div>
+    </CursorPrintReveal>
   );
 }

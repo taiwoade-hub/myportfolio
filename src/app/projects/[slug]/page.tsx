@@ -6,6 +6,7 @@ import { CoverArt } from "@/components/cover-art";
 import { Reveal } from "@/components/reveal";
 import { StatusBadge, TechChip } from "@/components/badges";
 import { getAdjacentProjects, getCategoryMeta, getProject, getProjectSlugs, statusMeta } from "@/lib/projects";
+import { getLiveProject } from "@/lib/dynamic-data";
 import { getRepoUrl } from "@/lib/github";
 import { getSiteUrl } from "@/lib/site";
 
@@ -13,13 +14,15 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const revalidate = 60;
+
 export function generateStaticParams() {
   return getProjectSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = (await getLiveProject(slug)) || getProject(slug);
   if (!project) return { title: "Project not found" };
 
   return {
@@ -57,7 +60,7 @@ function CaseSection({
 
 export default async function ProjectCaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = (await getLiveProject(slug)) || getProject(slug);
   if (!project) notFound();
 
   const category = getCategoryMeta(project.category);

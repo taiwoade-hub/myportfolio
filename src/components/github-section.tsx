@@ -6,6 +6,7 @@ import { Reveal } from "@/components/reveal";
 import { languageColors, getRepositoriesUrl } from "@/lib/github";
 import type { GitHubData } from "@/lib/github";
 import { cn } from "@/lib/utils";
+import { ArchitecturalSpotlightLayer } from "@/components/motion/architectural-spotlight";
 
 /**
  * GitHub section — live data when the profile is configured, the locally
@@ -162,12 +163,18 @@ export function GitHubSection({ data }: { data: GitHubData }) {
                     href={repo.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex h-full flex-col rounded-lg border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-lg hover:shadow-foreground/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    data-spotlight-card
+                    className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-lg hover:shadow-foreground/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   >
+                    <ArchitecturalSpotlightLayer />
                     {inner}
                   </a>
                 ) : (
-                  <div className="flex h-full flex-col rounded-lg border border-border bg-card p-5">
+                  <div
+                    data-spotlight-card
+                    className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card p-5"
+                  >
+                    <ArchitecturalSpotlightLayer />
                     {inner}
                     <Link
                       href="/projects"

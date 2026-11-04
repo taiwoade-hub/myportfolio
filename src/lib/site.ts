@@ -64,7 +64,7 @@ export function getAvailability(): string | null {
 export function getSiteUrl(): string {
   const url = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (url && /^https?:\/\//.test(url)) return url.replace(/\/$/, "");
-  return "http://localhost:3000";
+  return "http://localhost:3011";
 }
 
 export const navItems = [

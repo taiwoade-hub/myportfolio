@@ -21,3 +21,91 @@ model ContactMessage {
 
   @@index([createdAt])
 }
+
+/// Dynamic site configuration & personal identity
+model SiteSetting {
+  id             String   @id @default("singleton")
+  name           String   @default("Taiwo Adebola")
+  firstName      String   @default("Taiwo")
+  headline       String   @default("I build software, solve problems, and turn ideas into working products.")
+  intro          String   @default("I'm a cybersecurity student and aspiring software engineer interested in building useful applications, secure systems, intelligent automation and reliable infrastructure. I enjoy learning by creating real projects and exploring how technology works beneath the surface.")
+  location       String   @default("Nigeria")
+  cvPath         String   @default("/cv/taiwo-adebola-cv.pdf")
+  availableFor   String?  @default("open to internships and collaboration")
+  githubUsername String?  @default("taiwoade-hub")
+  linkedinUrl    String?
+  contactEmail   String?  @default("taiwoadebola237@gmail.com")
+  rolesJson      String   @default("[\"Software Engineer\",\"Cybersecurity\",\"DevOps\",\"AI & Automation\"]")
+  updatedAt      DateTime @updatedAt
+}
+
+/// Visual theme and UI layout toggles
+model UiConfig {
+  id               String   @id @default("singleton")
+  activeTheme      String   @default("slate") // slate, obsidian, cyberpunk, emerald, monochrome
+  heroVariant      String   @default("shader") // shader, terminal, clean, particles
+  showAvailability Boolean  @default(true)
+  showGitHubStats  Boolean  @default(true)
+  showBlog         Boolean  @default(true)
+  showEngineering  Boolean  @default(true)
+  showStack        Boolean  @default(true)
+  accentColor      String   @default("#38bdf8")
+  updatedAt        DateTime @updatedAt
+}
+
+/// Dynamic Project catalogue
+model ProjectItem {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  tagline       String
+  summary       String
+  category      String   // software, security, ai, devops, trading
+  status        String   // active, in-development, experimental, concept, ongoing
+  statusNote    String?
+  repo          String?
+  liveUrl       String?
+  techJson      String   // JSON array of strings
+  cover         String   // window, rings, nodes, pipeline, market, map, grid, ledger, terminal
+  featured      Boolean  @default(false)
+  published     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  caseStudyJson String   // JSON serialized ProjectCaseStudy
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+  @@index([featured])
+  @@index([published])
+}
+
+/// Dynamic Tech Stack skills
+model StackSkill {
+  id         String @id @default(cuid())
+  groupId    String // languages, frontend, backend, devops, security, etc.
+  groupTitle String
+  groupBlurb String
+  name       String
+  note       String
+  level      String // core, working, exploring
+  sortOrder  Int    @default(0)
+
+  @@index([groupId])
+}
+
+/// Dynamic Blog & Engineering Articles
+model ArticleItem {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  date        String
+  tagsJson    String   // JSON array
+  minutes     Int
+  blocksJson  String   // JSON array of ArticleBlock
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published])
+}

@@ -3,11 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { navItems } from "@/lib/site";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BrandLogo } from "@/components/brand-logo";
 import { cn } from "@/lib/utils";
+import { useCursorBuilder } from "@/components/motion/cursor-builder-provider";
+import { CursorPrintReveal } from "@/components/motion/cursor-print-reveal";
 
 /**
  * Compact, sticky header: monogram + name, desktop nav with an animated
@@ -21,6 +24,14 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
+  const { isTargetPrinted } = useCursorBuilder();
+  const headerPrinted = isTargetPrinted("header-nav");
+  const { scrollYProgress } = useScroll();
+  const caliperScaleX = useSpring(scrollYProgress, {
+    stiffness: 280,
+    damping: 34,
+    mass: 0.25,
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -28,10 +39,6 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  // The menu closes through link click handlers (see below), so no
-  // pathname effect is needed — navigation from within the menu always
-  // passes through onClick.
 
   // Scroll lock while the menu is open.
   useEffect(() => {
@@ -63,14 +70,20 @@ export function SiteHeader() {
     [pathname],
   );
 
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-md transition-shadow duration-300",
+        "sticky top-0 z-50 w-full border-b bg-background/85 backdrop-blur-md transition-[border-color,box-shadow] duration-300",
+        headerPrinted ? "border-border" : "border-transparent",
         scrolled && "shadow-[0_1px_0_0_rgba(0,0,0,0.02)]",
       )}
     >
-      <div className="container-site flex h-16 items-center justify-between gap-4">
+      <CursorPrintReveal
+        preloaderTarget="header-nav"
+        className="container-site flex h-16 items-center justify-between gap-4"
+      >
         {/* Wordmark */}
         <Link
           href="/"
@@ -78,12 +91,7 @@ export function SiteHeader() {
           className="group flex items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           aria-label="Taiwo Adebola — home"
         >
-          <span
-            aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card font-mono text-[13px] font-semibold tracking-tight transition-colors group-hover:border-accent-blue group-hover:text-accent-blue"
-          >
-            TA
-          </span>
+          <BrandLogo size="md" />
           <span className="hidden text-[15px] font-medium tracking-tight sm:block">
             Taiwo Adebola
           </span>
@@ -144,7 +152,7 @@ export function SiteHeader() {
             )}
           </button>
         </div>
-      </div>
+      </CursorPrintReveal>
 
       {/* Mobile menu */}
       <AnimatePresence>
@@ -202,6 +210,16 @@ export function SiteHeader() {
           </>
         ) : null}
       </AnimatePresence>
+
+      {/* 1px Swiss Vernier Caliper Scroll Progress Bar */}
+      <motion.div
+        aria-hidden="true"
+        style={{
+          scaleX: caliperScaleX,
+          backgroundColor: "var(--accent-blue)",
+        }}
+        className="pointer-events-none absolute inset-x-0 -bottom-[1px] h-[1.5px] origin-left"
+      />
     </header>
   );
 }

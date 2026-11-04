@@ -10,6 +10,7 @@ import {
   Lock,
   Plug,
   Server,
+  Sparkles,
   Terminal,
 } from "lucide-react";
 import { Reveal } from "@/components/reveal";
@@ -168,18 +169,25 @@ export default function AboutPage() {
             <aside className="rounded-lg border border-border bg-card p-6">
               <p className="label-mono text-muted-foreground">Curriculum vitae</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                A one-page PDF summary of my focus areas, projects and skills —
-                the same content as this site, printable.
+                Explore an interactive WebGL paper shader resume online, or download a one-page printable PDF summary of my focus areas and projects.
               </p>
-              <a
-                href={site.cvPath}
-                download
-                className="group mt-4 inline-flex h-10 items-center gap-2 rounded-md border border-border bg-background px-4 text-sm font-medium transition-colors hover:border-foreground/25 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                <Download className="h-4 w-4" aria-hidden="true" />
-                Download CV
-                <span className="font-mono text-[11px] text-muted-foreground/70">PDF</span>
-              </a>
+              <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                <Link
+                  href="/cv"
+                  className="group inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-all hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-accent-blue" aria-hidden="true" />
+                  Interactive CV
+                </Link>
+                <a
+                  href={site.cvPath}
+                  download
+                  className="group inline-flex h-10 items-center gap-2 rounded-md border border-border bg-background px-4 text-sm font-medium transition-colors hover:border-foreground/25 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                  PDF
+                </a>
+              </div>
             </aside>
           </div>
         </Reveal>

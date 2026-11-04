@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/reveal";
 import { stackGroups, stackLevelMeta } from "@/lib/stack";
 import { cn } from "@/lib/utils";
+import { ArchitecturalSpotlightLayer } from "@/components/motion/architectural-spotlight";
 
 export const metadata: Metadata = {
   title: "Tech Stack",
@@ -75,7 +76,11 @@ export default function StackPage() {
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {group.items.map((item, i) => (
                 <Reveal key={item.name} delay={0.03 * (i % 3)}>
-                  <li className="group h-full rounded-lg border border-border bg-card p-4 transition-colors hover:border-foreground/20">
+                  <li
+                    data-spotlight-card
+                    className="group relative h-full overflow-hidden rounded-lg border border-border bg-card p-4 transition-colors hover:border-foreground/20"
+                  >
+                    <ArchitecturalSpotlightLayer />
                     <div className="flex items-center justify-between gap-3">
                       <h3 className="text-[15px] font-medium tracking-tight transition-colors group-hover:text-accent-blue">
                         {item.name}

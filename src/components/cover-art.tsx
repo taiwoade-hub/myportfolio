@@ -289,9 +289,15 @@ export function CoverArt({ variant, name, className }: CoverArtProps) {
       role="img"
       aria-label={`Abstract cover artwork for ${name}`}
     >
-      <DotTexture />
-      <Art />
-      <CoverLabel name={name} />
+      <g className="transition-transform duration-500 ease-out group-hover:translate-x-1 group-hover:translate-y-1 motion-reduce:transform-none">
+        <DotTexture />
+      </g>
+      <g className=" origin-center transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:scale-[1.03] motion-reduce:transform-none">
+        <Art />
+      </g>
+      <g className="transition-transform duration-500 ease-out group-hover:translate-x-1.5 motion-reduce:transform-none">
+        <CoverLabel name={name} />
+      </g>
     </svg>
   );
 }
