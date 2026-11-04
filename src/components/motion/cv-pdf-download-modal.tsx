@@ -191,9 +191,18 @@ export function CvPdfDownloadModal() {
                     transition={{ delay: 0.1, duration: 0.35 }}
                     className="mt-4 flex flex-col justify-between gap-3 border-b-2 border-[#171718] pb-4 sm:flex-row sm:items-center"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#171718] font-mono text-sm font-bold text-[#fcfbf9]">
-                        TA
+                    <div className="flex items-center gap-3.5">
+                      <div className="relative h-12 w-12 shrink-0 rounded-lg border border-[#2461d1] bg-white p-0.5 shadow-xs">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/profile.jpg`}
+                          alt="Taiwo Adebola"
+                          className="h-full w-full rounded-[5px] object-cover object-top"
+                        />
+                        <span
+                          aria-hidden="true"
+                          className="absolute -right-1 -bottom-1 h-2.5 w-2.5 rounded-full border-2 border-[#fcfbf9] bg-emerald-500"
+                        />
                       </div>
                       <div>
                         <h3 className="text-xl font-bold tracking-tight text-[#171718]">
@@ -202,6 +211,9 @@ export function CvPdfDownloadModal() {
                         <p className="font-mono text-[9px] font-semibold tracking-wider text-[#2461d1] uppercase">
                           Software Engineer · Cybersecurity · DevOps · AI Automation
                         </p>
+                        <p className="mt-0.5 text-[10px] text-[#5c5c60]">
+                          B.Sc. Cybersecurity Candidate · Builder of Practical Software &amp; Self-Hosted Infrastructure
+                        </p>
                       </div>
                     </div>
                     <div className="font-mono text-[9px] leading-relaxed text-[#5c5c60] sm:text-right">
@@ -209,7 +221,7 @@ export function CvPdfDownloadModal() {
                       <p className="font-semibold text-[#171718]">
                         TAIWOADEBOLA.APP
                       </p>
-                      <p>GITHUB.COM/TAIWOADEBOLA</p>
+                      <p>GITHUB.COM/TAIWOADE-HUB</p>
                     </div>
                   </motion.div>
 

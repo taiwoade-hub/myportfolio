@@ -4,10 +4,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Download, Github, Linkedin, Sparkles } from "lucide-react";
 import type { SocialLinks } from "@/lib/site";
-import { Safari } from "@/components/ui/safari";
 import { CursorPrintReveal } from "@/components/motion/cursor-print-reveal";
 import { useCursorBuilder } from "@/components/motion/cursor-builder-provider";
-import { KineticTilt } from "@/components/motion/kinetic-tilt";
+import { HeroPortraitShowcase } from "@/components/motion/hero-portrait-showcase";
 
 interface HeroProps {
   social: SocialLinks;
@@ -147,65 +146,12 @@ export function Hero({
             </CursorPrintReveal>
           </div>
 
-          {/* ── Right Column: Target 5 — Safari Browser UI with Exploded 3D CAD Layers ──── */}
+          {/* ── Right Column: Target 5 — 3D Architectural Portrait Showcase ──── */}
           <CursorPrintReveal
             preloaderTarget="hero-safari"
             className="lg:col-span-5 flex items-center justify-center lg:justify-end"
           >
-            <KineticTilt
-              maxDegrees={3.6}
-              perspective={1200}
-              className="group/safari relative w-full max-w-[540px]"
-            >
-              {/* Recessed 3D CAD Substrate Layer (-44px Z) */}
-              <div
-                aria-hidden="true"
-                style={{
-                  transform: "translateZ(-44px) translate3d(14px, 14px, 0)",
-                }}
-                className="pointer-events-none absolute inset-0 rounded-2xl border border-dashed border-border bg-background/40 opacity-0 transition-opacity duration-300 group-hover/safari:opacity-100"
-              >
-                <span className="label-mono absolute right-3 -bottom-5 text-[9px] text-muted-foreground">
-                  Z:-44mm // SUBSTRATE_00
-                </span>
-              </div>
-
-              {/* Middle 3D CAD Wireframe Layer (-22px Z) */}
-              <div
-                aria-hidden="true"
-                style={{
-                  transform: "translateZ(-22px) translate3d(7px, 7px, 0)",
-                }}
-                className="pointer-events-none absolute inset-0 rounded-2xl border border-accent-blue/40 bg-card/30 opacity-0 transition-opacity duration-300 group-hover/safari:opacity-100"
-              >
-                <span className="label-mono absolute -top-5 left-3 text-[9px] text-accent-blue">
-                  Z:-22mm // WIREFRAME_MESH
-                </span>
-              </div>
-
-              {/* Primary Surface Layer (0px Z) */}
-              <div className="relative drop-shadow-2xl">
-                <Safari
-                  url="taiwoadebola.app"
-                  src="/profile.jpg"
-                  className="size-full rounded-2xl transition-transform duration-500"
-                />
-              </div>
-
-              {/* Elevated 3D Telemetry Callout (+24px Z) */}
-              <div
-                aria-hidden="true"
-                style={{
-                  transform: "translateZ(24px)",
-                }}
-                className="pointer-events-none absolute bottom-3 left-3 hidden items-center gap-2 rounded border border-border bg-background/95 px-2.5 py-1 opacity-0 shadow-sm transition-opacity duration-300 group-hover/safari:opacity-100 sm:inline-flex"
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-accent-blue" />
-                <span className="label-mono text-[9px] text-foreground">
-                  ORTHO_3D // 1203 × 753
-                </span>
-              </div>
-            </KineticTilt>
+            <HeroPortraitShowcase src="/profile.jpg" name={name} />
           </CursorPrintReveal>
         </div>
       </div>
