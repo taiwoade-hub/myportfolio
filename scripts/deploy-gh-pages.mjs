@@ -11,6 +11,10 @@ const NEXT_SERVER_APP = path.join(ROOT, ".next", "server", "app");
 const PUBLIC_DIR = path.join(ROOT, "public");
 
 const buildOnly = process.argv.includes("--build-only");
+const basePath =
+  process.env.NEXT_PUBLIC_BASE_PATH !== undefined
+    ? process.env.NEXT_PUBLIC_BASE_PATH
+    : "/myportfolio";
 
 function copyRecursive(src, dest) {
   if (!fs.existsSync(src)) return;
@@ -76,12 +80,13 @@ function collectAppAssets(dir, relDir = "") {
   }
 }
 
-console.log("▸ [1/3] Building Next.js portfolio for GitHub Pages...");
+console.log(`▸ [1/3] Building Next.js portfolio for GitHub Pages (basePath: "${basePath || "/"}")...`);
 execSync("npx next build", {
   stdio: "inherit",
   env: {
     ...process.env,
     GITHUB_PAGES: "true",
+    NEXT_PUBLIC_BASE_PATH: basePath,
   },
 });
 
@@ -100,6 +105,25 @@ collectAppAssets(NEXT_SERVER_APP);
 
 // 4. Add .nojekyll so GitHub Pages serves the _next/ folder
 fs.writeFileSync(path.join(OUT_DIR, ".nojekyll"), "");
+
+// 5. Ensure public asset paths (/profile.jpg, /avatar.jpg, /cv/...) work under project subpath
+if (basePath) {
+  const rewriteHtmlFiles = (dir) => {
+    for (const entry of fs.readdirSync(dir)) {
+      const full = path.join(dir, entry);
+      if (fs.statSync(full).isDirectory()) {
+        rewriteHtmlFiles(full);
+      } else if (entry.endsWith(".html") || entry.endsWith(".rsc")) {
+        let content = fs.readFileSync(full, "utf8");
+        content = content
+          .replace(/(src|href)="\/(profile\.jpg|avatar\.jpg|cv\/[^"]+)"/g, `$1="${basePath}/$2"`)
+          .replace(/\\"(profile\.jpg|avatar\.jpg|cv\/[^"\\]+)\\"/g, `\\"${basePath}/$1\\"`);
+        fs.writeFileSync(full, content);
+      }
+    }
+  };
+  rewriteHtmlFiles(OUT_DIR);
+}
 
 console.log("✓ Static export ready in ./out");
 
