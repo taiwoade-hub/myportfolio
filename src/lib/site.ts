@@ -27,7 +27,7 @@ export const site = {
   intro:
     "I'm a cybersecurity student and aspiring software engineer interested in building useful applications, secure systems, intelligent automation and reliable infrastructure. I enjoy learning by creating real projects and exploring how technology works beneath the surface.",
   location: "Nigeria",
-  cvPath: "/cv/taiwo-adebola-cv.pdf",
+  cvPath: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/cv/taiwo-adebola-cv.pdf`,
 } as const;
 
 export interface SocialLinks {

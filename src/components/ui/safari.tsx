@@ -14,6 +14,12 @@ export function Safari({
   height = 753,
   ...props
 }: SafariProps) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const resolvedSrc =
+    src && src.startsWith("/") && !src.startsWith("//") && basePath
+      ? `${basePath}${src}`
+      : src;
+
   return (
     <svg
       width={width}
@@ -128,7 +134,7 @@ export function Safari({
           />
         </g>
         <image
-          href={src}
+          href={resolvedSrc}
           width="1200"
           height="700"
           x="1"
