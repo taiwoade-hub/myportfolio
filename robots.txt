@@ -1,0 +1,7 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_vault/
+
+Sitemap: http://localhost:3011/sitemap.xml
