@@ -66,36 +66,55 @@ const SESSION_STORAGE_KEY = "ta_cursor_builder_v2";
 
 type CursorToolType = "arrow" | "ibeam" | "crosshair" | "resize";
 
-interface AgentSpec {
+export interface AgentSpec {
   id: number;
+  name: string;
+  role: string;
   color: string;
   defaultTool: CursorToolType;
 }
 
-const AGENT_PALETTE = [
-  "var(--accent-blue)",
-  "#38bdf8",
-  "#34d399",
-  "#fb7185",
-  "#a78bfa",
-  "#fbbf24",
-  "#2dd4bf",
-  "#f472b6",
-  "#60a5fa",
+export const AGENT_PALETTE = [
+  "#3b82f6", // Blue (Lead)
+  "#06b6d4", // Cyan (UI/UX)
+  "#10b981", // Emerald (DevOps)
+  "#f43f5e", // Rose (Security)
+  "#8b5cf6", // Violet (Backend)
+  "#f59e0b", // Amber (Frontend)
+  "#14b8a6", // Teal (Design System)
+  "#ec4899", // Pink (Motion Lab)
+  "#6366f1", // Indigo (Database)
+  "#0ea5e9", // Sky (Full-Stack)
+  "#84cc16", // Lime (Performance)
+  "#f97316", // Orange (Cloud Ops)
+  "#d946ef", // Fuchsia (QA Engine)
+  "#a855f7", // Purple (Typography)
+  "#22c55e", // Green (API Gateway)
+  "#0284c7", // Light Blue (Accessibility)
+  "#e11d48", // Crimson (Systems)
+  "#059669", // Dark Teal (Deploy)
 ];
 
-const AGENTS: AgentSpec[] = Array.from({ length: 18 }, (_, i) => ({
-  id: i,
-  color: AGENT_PALETTE[i % AGENT_PALETTE.length],
-  defaultTool:
-    i % 5 === 1
-      ? "ibeam"
-      : i % 5 === 2
-        ? "crosshair"
-        : i % 7 === 0
-          ? "resize"
-          : "arrow",
-}));
+export const AGENTS: AgentSpec[] = [
+  { id: 0, name: "Taiwo", role: "Arch", color: "#3b82f6", defaultTool: "arrow" },
+  { id: 1, name: "Sarah", role: "UI/UX", color: "#06b6d4", defaultTool: "arrow" },
+  { id: 2, name: "Alex", role: "DevOps", color: "#10b981", defaultTool: "crosshair" },
+  { id: 3, name: "Maya", role: "Security", color: "#f43f5e", defaultTool: "arrow" },
+  { id: 4, name: "Jordan", role: "Backend", color: "#8b5cf6", defaultTool: "ibeam" },
+  { id: 5, name: "Leo", role: "Frontend", color: "#f59e0b", defaultTool: "arrow" },
+  { id: 6, name: "Elena", role: "Design", color: "#14b8a6", defaultTool: "resize" },
+  { id: 7, name: "Chen", role: "Motion", color: "#ec4899", defaultTool: "arrow" },
+  { id: 8, name: "Nia", role: "Data", color: "#6366f1", defaultTool: "arrow" },
+  { id: 9, name: "Chris", role: "Full-Stack", color: "#0ea5e9", defaultTool: "ibeam" },
+  { id: 10, name: "Sam", role: "Perf", color: "#84cc16", defaultTool: "crosshair" },
+  { id: 11, name: "Avery", role: "Cloud", color: "#f97316", defaultTool: "arrow" },
+  { id: 12, name: "Kai", role: "QA Engine", color: "#d946ef", defaultTool: "resize" },
+  { id: 13, name: "Morgan", role: "Type", color: "#a855f7", defaultTool: "ibeam" },
+  { id: 14, name: "Riley", role: "API", color: "#22c55e", defaultTool: "arrow" },
+  { id: 15, name: "Taylor", role: "A11y", color: "#0284c7", defaultTool: "crosshair" },
+  { id: 16, name: "Quinn", role: "Systems", color: "#e11d48", defaultTool: "arrow" },
+  { id: 17, name: "Jamie", role: "Deploy", color: "#059669", defaultTool: "resize" },
+];
 
 interface LayerItem {
   id: number;
@@ -126,9 +145,12 @@ interface AgentRender {
   x: number;
   y: number;
   color: string;
+  name: string;
+  role: string;
   tool: CursorToolType;
   scale: number;
   opacity: number;
+  isFraming?: boolean;
 }
 
 interface BoxRender {
@@ -140,6 +162,8 @@ interface BoxRender {
   fullWidth: number;
   fullHeight: number;
   progress: number;
+  color: string;
+  agentName: string;
 }
 
 function easeOutCubic(t: number): number {
@@ -438,7 +462,7 @@ export function CursorBuilderProvider({
     setIsTouring(true);
 
     const scanStart = performance.now();
-    const scanDuration = 1450;
+    const scanDuration = 1800;
 
     const tick = (now: number) => {
       const curVw = window.innerWidth;
@@ -473,14 +497,18 @@ export function CursorBuilderProvider({
             agentPosRef.current[i].y = y;
           }
 
+          const spec = AGENTS[i % AGENTS.length];
           swarmAgents.push({
             id: i,
             x,
             y,
-            color: AGENTS[i % AGENTS.length].color,
+            color: spec.color,
+            name: spec.name,
+            role: spec.role,
             tool: "arrow",
             scale: 1,
-            opacity: Math.min(1, p * 3.5),
+            opacity: Math.min(1, p * 2.8),
+            isFraming: false,
           });
         }
 
@@ -535,6 +563,8 @@ export function CursorBuilderProvider({
           const elapsed = (now - task.startTime) * speed;
           const totalDuration = task.moveDuration + task.frameDuration;
 
+          const spec = AGENTS[task.agentId % AGENTS.length];
+
           if (elapsed <= task.moveDuration) {
             // Flying to top-left corner of layer
             const t = easeOutCubic(elapsed / task.moveDuration);
@@ -545,10 +575,13 @@ export function CursorBuilderProvider({
               id: task.agentId,
               x: cx,
               y: cy,
-              color: AGENTS[task.agentId % AGENTS.length].color,
+              color: spec.color,
+              name: spec.name,
+              role: spec.role,
               tool: task.tool,
               scale: 1,
               opacity: 1,
+              isFraming: false,
             });
 
             if (agentPosRef.current[task.agentId]) {
@@ -557,6 +590,7 @@ export function CursorBuilderProvider({
             }
 
             if (typeof task.assistAgentId === "number") {
+              const assistSpec = AGENTS[task.assistAgentId % AGENTS.length];
               const assistSlot = agentPosRef.current[task.assistAgentId];
               const ax =
                 (assistSlot?.x ?? curVw * 0.5) +
@@ -568,10 +602,13 @@ export function CursorBuilderProvider({
                 id: task.assistAgentId,
                 x: ax,
                 y: ay,
-                color: AGENTS[task.assistAgentId % AGENTS.length].color,
+                color: assistSpec.color,
+                name: assistSpec.name,
+                role: assistSpec.role,
                 tool: "crosshair",
                 scale: 0.95,
                 opacity: 0.9,
+                isFraming: false,
               });
             }
 
@@ -599,10 +636,13 @@ export function CursorBuilderProvider({
               id: task.agentId,
               x: cx,
               y: cy,
-              color: AGENTS[task.agentId % AGENTS.length].color,
+              color: spec.color,
+              name: spec.name,
+              role: spec.role,
               tool: task.tool,
-              scale: 0.92,
+              scale: 1,
               opacity: 1,
+              isFraming: true,
             });
 
             if (agentPosRef.current[task.agentId]) {
@@ -611,16 +651,20 @@ export function CursorBuilderProvider({
             }
 
             if (typeof task.assistAgentId === "number") {
+              const assistSpec = AGENTS[task.assistAgentId % AGENTS.length];
               const ax = rect.left + rect.width;
               const ay = rect.top + curH * 0.85;
               activeAgentMap.set(task.assistAgentId, {
                 id: task.assistAgentId,
                 x: ax,
                 y: ay,
-                color: AGENTS[task.assistAgentId % AGENTS.length].color,
+                color: assistSpec.color,
+                name: assistSpec.name,
+                role: assistSpec.role,
                 tool: "crosshair",
-                scale: 0.92,
+                scale: 0.95,
                 opacity: 0.95,
+                isFraming: true,
               });
               if (agentPosRef.current[task.assistAgentId]) {
                 agentPosRef.current[task.assistAgentId].x = ax;
@@ -639,6 +683,8 @@ export function CursorBuilderProvider({
                 fullWidth: rect.width,
                 fullHeight: rect.height,
                 progress: frameT,
+                color: spec.color,
+                agentName: spec.name,
               });
             }
 
@@ -674,7 +720,7 @@ export function CursorBuilderProvider({
         }
 
         // 3. Assign idle agents to the next unprinted layers in or near the viewport
-        const maxConcurrentTasks = curVw < 640 ? 5 : 9;
+        const maxConcurrentTasks = curVw < 640 ? 3 : 5;
         if (activeTasksRef.current.length < maxConcurrentTasks) {
           // Prefer layers currently visible in viewport; otherwise pick next unprinted layer
           const inViewportHidden = layers.filter((l) => {
@@ -725,13 +771,13 @@ export function CursorBuilderProvider({
                   ? "resize"
                   : AGENTS[freeAgentIdx % AGENTS.length].defaultTool;
 
-            const moveDuration = 220 + (freeAgentIdx % 4) * 45;
+            const moveDuration = 380 + (freeAgentIdx % 4) * 50;
             const frameDuration =
               candidate.kind === "card"
-                ? 540
+                ? 640
                 : candidate.kind === "text"
-                  ? 380
-                  : 310;
+                  ? 480
+                  : 380;
 
             activeTasksRef.current.push({
               layerId: candidate.id,
@@ -760,14 +806,18 @@ export function CursorBuilderProvider({
               slot.x = Math.max(28, Math.min(curVw - 40, driftX));
               slot.y = Math.max(28, Math.min(curVh - 60, driftY));
 
+              const spec = AGENTS[i % AGENTS.length];
               activeAgentMap.set(i, {
                 id: i,
                 x: slot.x,
                 y: slot.y,
-                color: AGENTS[i % AGENTS.length].color,
-                tool: AGENTS[i % AGENTS.length].defaultTool,
-                scale: 0.9,
-                opacity: 0.65,
+                color: spec.color,
+                name: spec.name,
+                role: spec.role,
+                tool: spec.defaultTool,
+                scale: 0.92,
+                opacity: 0.72,
+                isFraming: false,
               });
             }
           }
@@ -782,9 +832,9 @@ export function CursorBuilderProvider({
             const rect = nextUnbuilt.el.getBoundingClientRect();
             const desiredTop = curVh * 0.34;
             const delta = rect.top - desiredTop;
-            if (delta > 90 || delta < -180) {
+            if (delta > 100 || delta < -180) {
               window.scrollBy({
-                top: delta * 0.045 * speed,
+                top: delta * 0.038 * speed,
                 behavior: "instant" as ScrollBehavior,
               });
             }
@@ -1071,7 +1121,7 @@ export function CursorBuilderProvider({
               aria-hidden="true"
               className="pointer-events-none fixed inset-0 z-[9995] overflow-hidden select-none"
             >
-              {/* Figma-style Wireframe Selection Boxes with 4 White Square Handles & Solid Blue W×H Pill */}
+              {/* Figma-style Wireframe Selection Boxes with 4 Corner Handles & Multi-Color Theming */}
               {boxesRender.map((box) => (
                 <div
                   key={`box-${box.id}`}
@@ -1079,44 +1129,55 @@ export function CursorBuilderProvider({
                     transform: `translate3d(${Math.round(box.left)}px, ${Math.round(box.top)}px, 0)`,
                     width: `${Math.round(box.width)}px`,
                     height: `${Math.round(box.height)}px`,
-                    borderColor: "var(--accent-blue)",
-                    backgroundColor:
-                      "color-mix(in oklab, var(--accent-blue) 13%, rgba(128,128,128,0.06))",
+                    borderColor: box.color,
+                    backgroundColor: `color-mix(in oklab, ${box.color} 14%, rgba(128,128,128,0.05))`,
+                    boxShadow: `0 0 0 1px color-mix(in oklab, ${box.color} 30%, transparent), 0 4px 14px color-mix(in oklab, ${box.color} 12%, transparent)`,
                   }}
                   className="absolute top-0 left-0 border will-change-transform"
                 >
-                  {/* 4 White Square Corner Handles (Figma Selection Handles) */}
+                  {/* 4 White Corner Handles with Agent Color Border */}
                   <span
-                    style={{ borderColor: "var(--accent-blue)" }}
-                    className="absolute -top-[3px] -left-[3px] h-[5px] w-[5px] border bg-white"
+                    style={{ borderColor: box.color }}
+                    className="absolute -top-[3px] -left-[3px] h-[5px] w-[5px] border bg-white shadow-2xs"
                   />
                   <span
-                    style={{ borderColor: "var(--accent-blue)" }}
-                    className="absolute -top-[3px] -right-[3px] h-[5px] w-[5px] border bg-white"
+                    style={{ borderColor: box.color }}
+                    className="absolute -top-[3px] -right-[3px] h-[5px] w-[5px] border bg-white shadow-2xs"
                   />
                   <span
-                    style={{ borderColor: "var(--accent-blue)" }}
-                    className="absolute -bottom-[3px] -left-[3px] h-[5px] w-[5px] border bg-white"
+                    style={{ borderColor: box.color }}
+                    className="absolute -bottom-[3px] -left-[3px] h-[5px] w-[5px] border bg-white shadow-2xs"
                   />
                   <span
-                    style={{ borderColor: "var(--accent-blue)" }}
-                    className="absolute -right-[3px] -bottom-[3px] h-[5px] w-[5px] border bg-white"
+                    style={{ borderColor: box.color }}
+                    className="absolute -right-[3px] -bottom-[3px] h-[5px] w-[5px] border bg-white shadow-2xs"
                   />
 
-                  {/* Solid Blue Pixel Dimension Readout Badge (e.g., 280 × 68) */}
+                  {/* Top-Left Agent Name Pill Tag */}
                   <span
                     style={{
-                      backgroundColor: "var(--accent-blue)",
+                      backgroundColor: box.color,
                       color: "#ffffff",
                     }}
-                    className="absolute -bottom-[16px] left-1/2 -translate-x-1/2 rounded-[2px] px-1.5 py-[1px] font-mono text-[9px] leading-tight font-medium whitespace-nowrap tabular-nums shadow-2xs"
+                    className="absolute -top-[16px] left-0 rounded-t-[3px] px-1.5 py-[1px] font-mono text-[8px] leading-tight font-semibold tracking-wide uppercase whitespace-nowrap shadow-xs"
+                  >
+                    {box.agentName}
+                  </span>
+
+                  {/* Bottom Center Dimension Readout Badge (e.g., 280 × 68) */}
+                  <span
+                    style={{
+                      backgroundColor: box.color,
+                      color: "#ffffff",
+                    }}
+                    className="absolute -bottom-[16px] left-1/2 -translate-x-1/2 rounded-[2px] px-1.5 py-[1px] font-mono text-[9px] leading-tight font-medium whitespace-nowrap tabular-nums shadow-xs"
                   >
                     {Math.round(box.width)} × {Math.round(box.height)}
                   </span>
                 </div>
               ))}
 
-              {/* 18 Autonomous Multi-Tool Cursors (Arrow, I-Beam, Crosshair +, Resize) */}
+              {/* 18 Autonomous Multi-Tool Cursors with Multi-Color Badges & Realistic Pointers */}
               {agentsRender.map((agent) => (
                 <div
                   key={`agent-${agent.id}`}
@@ -1126,7 +1187,7 @@ export function CursorBuilderProvider({
                   }}
                   className="absolute top-0 left-0 origin-top-left will-change-transform"
                 >
-                  <AgentCursorIcon tool={agent.tool} color={agent.color} />
+                  <AgentCursor agent={agent} />
                 </div>
               ))}
             </div>
@@ -1290,7 +1351,7 @@ export function CursorBuilderProvider({
                       <div className="h-6 rounded-[1px] bg-foreground/10" />
                     </div>
 
-                    {/* Active blue wireframe boxes projected into the minimap */}
+                    {/* Active wireframe boxes projected into the minimap matching agent colors */}
                     {boxesRender.map((b) => {
                       const rx = (b.left / Math.max(1, viewportSize.w)) * 176;
                       const ry = (b.top / Math.max(1, viewportSize.h)) * 96;
@@ -1309,9 +1370,8 @@ export function CursorBuilderProvider({
                             transform: `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`,
                             width: `${rw.toFixed(1)}px`,
                             height: `${rh.toFixed(1)}px`,
-                            borderColor: "var(--accent-blue)",
-                            backgroundColor:
-                              "color-mix(in oklab, var(--accent-blue) 28%, transparent)",
+                            borderColor: b.color || "var(--accent-blue)",
+                            backgroundColor: `color-mix(in oklab, ${b.color || "var(--accent-blue)"} 30%, transparent)`,
                           }}
                           className="absolute top-0 left-0 border"
                         />
@@ -1375,92 +1435,121 @@ export function CursorBuilderProvider({
 }
 
 /**
- * Renders the 4 distinct CAD/Figma agent cursor tool icons seen in the reference video:
- * - `arrow`: Colored pointer arrow
- * - `ibeam`: Typography I-beam cursor
- * - `crosshair`: Precision `+` crosshair
- * - `resize`: Corner/diagonal framing cursor
+ * Renders collaborative multiplayer cursors:
+ * - Crisp SVG pointer (Arrow, I-Beam, Crosshair, Resize) with high-contrast dual outline
+ * - Real designer/agent name pill badge with distinct vibrant color, role, and active status
  */
-function AgentCursorIcon({
-  tool,
-  color,
-}: {
-  tool: CursorToolType;
-  color: string;
-}) {
-  if (tool === "ibeam") {
-    return (
-      <svg
-        width="14"
-        height="18"
-        viewBox="0 0 14 18"
-        fill="none"
-        className=" -translate-x-1/2 -translate-y-1/2 drop-shadow-xs"
-      >
-        <path
-          d="M4 2H10M7 2V16M4 16H10"
-          stroke="var(--foreground)"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
-
-  if (tool === "crosshair") {
-    return (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        className="-translate-x-1/2 -translate-y-1/2 drop-shadow-xs"
-      >
-        <path
-          d="M7 1.5V12.5M1.5 7H12.5"
-          stroke="var(--foreground)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
-
-  if (tool === "resize") {
-    return (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        className="-translate-x-1/2 -translate-y-1/2 drop-shadow-xs"
-      >
-        <path
-          d="M3 7V3H7M13 9V13H9M3 3L13 13"
-          stroke={color}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
-  }
+function AgentCursor({ agent }: { agent: AgentRender }) {
+  const isArrow = agent.tool === "arrow";
+  const isIbeam = agent.tool === "ibeam";
+  const isCrosshair = agent.tool === "crosshair";
+  const isResize = agent.tool === "resize";
 
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      className="drop-shadow-xs"
-    >
-      <path
-        d="M1.5 1.5L6.6 14.2L8.8 8.8L14.2 6.6L1.5 1.5Z"
-        fill={color}
-        stroke="var(--background)"
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div className="relative select-none pointer-events-none drop-shadow-md">
+      {/* 1. Primary Tool Cursor Icon */}
+      {isArrow && (
+        <svg
+          width="18"
+          height="20"
+          viewBox="0 0 18 20"
+          fill="none"
+          className="origin-top-left drop-shadow-xs"
+        >
+          <path
+            d="M2 2L7.6 18.2L10.5 11.8L16.8 9L2 2Z"
+            fill={agent.color}
+            stroke="#ffffff"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+
+      {isIbeam && (
+        <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center drop-shadow-xs">
+          <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+            <path
+              d="M3 2H11M7 2V18M3 18H11"
+              stroke={agent.color}
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M3 2H11M7 2V18M3 18H11"
+              stroke="#ffffff"
+              strokeWidth="0.8"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
+
+      {isCrosshair && (
+        <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center drop-shadow-xs">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle
+              cx="8"
+              cy="8"
+              r="5.5"
+              stroke={agent.color}
+              strokeWidth="1.5"
+              fill="rgba(255,255,255,0.2)"
+            />
+            <path
+              d="M8 1V15M1 8H15"
+              stroke={agent.color}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
+
+      {isResize && (
+        <div className="-translate-x-1/2 -translate-y-1/2 flex items-center justify-center drop-shadow-xs">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M3 7V3H7M13 9V13H9M3 3L13 13"
+              stroke={agent.color}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M3 7V3H7M13 9V13H9M3 3L13 13"
+              stroke="#ffffff"
+              strokeWidth="0.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      )}
+
+      {/* 2. Collaborative Multi-Cursor Name Tag Badge */}
+      <div
+        style={{
+          backgroundColor: agent.color,
+          boxShadow:
+            "0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.3)",
+        }}
+        className={`absolute top-3.5 left-3.5 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-white font-mono text-[9px] font-semibold tracking-wide whitespace-nowrap shadow-md transition-transform ${
+          agent.isFraming ? "scale-105" : "scale-100"
+        }`}
+      >
+        <span className="leading-none">{agent.name}</span>
+        {agent.isFraming ? (
+          <span className="flex items-center gap-1 font-normal opacity-95 text-[8px] leading-none">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            <span>drafting</span>
+          </span>
+        ) : (
+          <span className="font-normal opacity-80 text-[8px] leading-none">
+            · {agent.role}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
